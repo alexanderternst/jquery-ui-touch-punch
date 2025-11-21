@@ -195,10 +195,6 @@
     touchHandled = false;
   };
 
-  let _touchStartBound;
-  let _touchMoveBound;
-  let _touchEndBound
-
   /**
    * A duck punch of the $.ui.mouse _mouseInit method to support touch events.
    * This method extends the widget with bound touch event handlers that
@@ -210,19 +206,19 @@
     let self = this;
 	  
     // Microsoft Surface Support = remove original touch Action
-    if ($.support.mspointer) {
+    if ($.mspointer || ($.support && $.support.mspointer)) {
       self.element[0].style.msTouchAction = 'none';
     }	
 
-    _touchStartBound = mouseProto._touchStart.bind(self);
-    _touchMoveBound  = mouseProto._touchMove.bind(self);
-    _touchEndBound   = mouseProto._touchEnd.bind(self);	  
+    self._touchStartBound = mouseProto._touchStart.bind(self);
+    self._touchMoveBound  = mouseProto._touchMove.bind(self);
+    self._touchEndBound   = mouseProto._touchEnd.bind(self);	  
 
     // Delegate the touch handlers to the widget's element
     self.element.on({
-      touchstart: _touchStartBound,
-      touchmove: _touchMoveBound,
-      touchend: _touchEndBound
+      touchstart: self._touchStartBound,
+      touchmove: self._touchMoveBound,
+      touchend: self._touchEndBound
     });
 
     // Call the original $.ui.mouse init method
@@ -238,10 +234,15 @@
 
     // Delegate the touch handlers to the widget's element
     self.element.off({
-      touchstart: _touchStartBound,
-      touchmove: _touchMoveBound,
-      touchend: _touchEndBound
+      touchstart: self._touchStartBound,
+      touchmove: self._touchMoveBound,
+      touchend: self._touchEndBound
     });
+	
+	// Clean up references
+	self._touchStartBound = null;
+	self._touchMoveBound = null;
+	self._touchEndBound = null;
 
     // Call the original $.ui.mouse destroy method
     _mouseDestroy.call(self);
