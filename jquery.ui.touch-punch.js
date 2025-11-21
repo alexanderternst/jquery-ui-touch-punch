@@ -204,7 +204,7 @@
     let self = this;
 
     // Microsoft Surface Support = remove original touch Action
-    if ($.mspointer || $.support?.mspointer) {
+    if ($.mspointer || ($.support && $.support.mspointer)) {
       self.element[0].style.msTouchAction = 'none';
     }
 
